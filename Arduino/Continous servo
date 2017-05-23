@@ -1,0 +1,84 @@
+#include <Servo.h>
+Servo servo;
+
+int button = 7;
+int button2 = 6;
+int powerControl = 8;
+int servoPin = 9;
+int buttonState = 0;
+int shutoff = 0;
+int spin = 0;
+int binNum = 1;
+
+void setup() {
+    //Debug
+  Serial.begin(9600);
+    // pin 6 to switch
+    //pinMode(button2, INPUT);
+
+    // pin 7 to switch
+    pinMode(button, INPUT);
+    
+    // pin 8 to base of Transistor
+    pinMode(powerControl, OUTPUT);
+    Serial.println("Transistor base set to pin " + String(powerControl, DEC));
+    
+    //pin 9 to Servo signal line
+    pinMode(servoPin, OUTPUT);
+  Serial.println("Servo signal set to pin " + String(servoPin, DEC));
+
+    //pin 13 to light
+    pinMode(13, OUTPUT);
+
+}
+
+void loop() {
+    if(binNum==1)
+    {
+      bin1();
+    }
+
+    if(binNum==3)
+    {
+      bin3();
+    }
+}
+
+void bin1() {
+    while(spin == 0)
+    {
+      buttonState = digitalRead(button);
+      Serial.println(buttonState);
+      //Serial.println("Servo attached");
+      servo.attach(servoPin);
+      digitalWrite(powerControl, HIGH);
+      servo.write(95);
+      if(buttonState == HIGH)
+      {
+        Serial.println("Servo detached");
+        digitalWrite(13, HIGH);
+        digitalWrite(powerControl, LOW);
+        servo.detach();
+        spin = 1;
+      }
+    }
+
+void bin3() {
+  while(spin == 0)
+    {
+      buttonState2 = digitalRead(button2);
+      Serial.println(buttonState);
+      //Serial.println("Servo attached");
+      servo.attach(servoPin);
+      digitalWrite(powerControl, HIGH);
+      servo.write(95);
+      if(buttonState2 == HIGH)
+      {
+        Serial.println("Servo detached");
+        digitalWrite(13, HIGH);
+        digitalWrite(powerControl, LOW);
+        servo.detach();
+        spin = 1;
+      }
+    }
+}
