@@ -1,0 +1,6 @@
+# ignore some Mac files
+.DS_Store
+
+#ignore mathematica backup files 
+*.nb~
+*.nb~~
