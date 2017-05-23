@@ -20,17 +20,18 @@ Servo trapdoor;
 
 int switchPin2 = 6;
 int switchPin1 = 7;
-int servoPin = 9;
 int powerControl = 8;
-int platPin= 9;
+int platPin = 9;
 int trapPin = 10;
 int incomingByte = 0; // for incoming serial data
+//int posplat = 0; //for switch statement
 int postrap = 0; //for trapdoor position
 int switchStatus = 0;
 int switchStatus2 = 0;
 int shutoff = 0;
 int spin = 0;
 int binNum = 0;
+bool susanMoved = false;
 
 void setup() {
     //Debug
@@ -47,7 +48,7 @@ void setup() {
     
     //pin 9 to Servo signal line
     pinMode(platPin, OUTPUT);
-    Serial.println("Servo signal set to pin " + String(servoPin, DEC));
+    Serial.println("Servo signal set to pin " + String(platPin, DEC));
 
     //pin 10 to trapdoor 
     trapdoor.attach(trapPin); 
@@ -61,38 +62,68 @@ void setup() {
 }
 
 void loop() {
-
-      if (Serial.available() > 0) {
-      binNum = Serial.read();
   
+    if (Serial.available() > 0) {
+      binNum = Serial.read();
       Serial.print("I received: ");
       Serial.println(binNum, DEC);   // display received value as decimal
     }
-    switch(binNum){
-      
-      case 49://(binNum == 1)
-        bin1();
-        break;
-      case 50://(binNum == 2)
-        bin2();
-        break;
-      case 51://(binNum == 3)
-        bin3();
-        break;
-      case 52://(binNum == 4)
-        bin4();
-        break;
-        
-      default:
-      break;
-    }
     
+    switch (binNum) {
+    case 49://(binNum == 1)
+      bin1();
+      susanMoved = true;
+      break;
+    case 50://(binNum == 2)
+      bin2();
+      susanMoved = true;
+      break;
+    case 51://(binNum == 3)
+      bin3();
+      susanMoved = true;
+      break;
+    case 52://(binNum == 4)
+      bin4();
+      susanMoved = true;
+      break;
+    case 111: //o
+      digitalWrite(powerControl, HIGH);
+      //Serial.println("transistor on");
+      break;
+    case 115://s
+      digitalWrite(powerControl, LOW);
+      //Serial.println("transistor off");
+      break;
+    default:
+      //posplat=135;
+      susanMoved=false;
+      //Serial.println("Nothing happened");
+      break; 
+  }
+  if (susanMoved) {
+    Serial.println("The lazy susan moved! Drop the item");
+    Serial.println("Position: " + String(binNum, DEC));
+
+    //Wait, then open trap door
+    delay(2000);
+    trapdoor.write(90);
+    delay(3000);
+
+    // Close trapdoor slowly. Reset to trapdoor to pos 0.
+    for (int i = 60; i > 0; i--) {
+      trapdoor.write(i);
+      delay(10);
+    }
+    susanMoved = false;
+    // *lazy susan servo does not need to reset to it's original position
+  }
+  
 }
 
 void bin1() {
 
   //start spinning servo
-  platform.attach(servoPin);
+  platform.attach(platPin);
   digitalWrite(powerControl, HIGH);
   platform.write(94);
   
@@ -101,6 +132,7 @@ void bin1() {
   Serial.println(switchStatus); // print switch status
   if(switchStatus == HIGH)
   {
+    delay(200);
     digitalWrite(powerControl, LOW);
     platform.detach();
     binNum = 0;
@@ -110,7 +142,7 @@ void bin1() {
 
 void bin2() {
   //start spinning servo
-  platform.attach(servoPin);
+  platform.attach(platPin);
   digitalWrite(powerControl, HIGH);
   platform.write(94);
   
@@ -128,7 +160,7 @@ void bin2() {
 
 void bin3() {
   //start spinning servo
-  platform.attach(servoPin);
+  platform.attach(platPin);
   digitalWrite(powerControl, HIGH);
   platform.write(94);
   
@@ -146,7 +178,7 @@ void bin3() {
 
 void bin4() {
   //start spinning servo
-  platform.attach(servoPin);
+  platform.attach(platPin);
   digitalWrite(powerControl, HIGH);
   platform.write(94);
   
