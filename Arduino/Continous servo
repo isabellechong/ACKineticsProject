@@ -61,65 +61,103 @@ void setup() {
 }
 
 void loop() {
+
       if (Serial.available() > 0) {
       binNum = Serial.read();
   
       Serial.print("I received: ");
       Serial.println(binNum, DEC);   // display received value as decimal
     }
-    
     switch(binNum){
       
       case 49://(binNum == 1)
         bin1();
-      //case 50://(binNum == 2)
-        //bin2();
-        //break;
+        break;
+      case 50://(binNum == 2)
+        bin2();
+        break;
       case 51://(binNum == 3)
         bin3();
-      //case 52://(binNum == 4)
-        //bin4();
-        //break;
+        break;
+      case 52://(binNum == 4)
+        bin4();
+        break;
+        
+      default:
+      break;
     }
+    
 }
 
 void bin1() {
-    while(spin == 0)
-    {
-      switchStatus = digitalRead(switchPin1);
-      Serial.println(switchStatus);
-      //Serial.println("Servo attached");
-      platform.attach(servoPin);
-      digitalWrite(powerControl, HIGH);
-      platform.write(95);
-      if(switchStatus == HIGH)
-      {
-        Serial.println("Servo detached");
-        digitalWrite(13, HIGH);
-        digitalWrite(powerControl, LOW);
-        platform.detach();
-        spin = 1;
-      }
-    }
+
+  //start spinning servo
+  platform.attach(servoPin);
+  digitalWrite(powerControl, HIGH);
+  platform.write(94);
+  
+  //stop when servo reaches first switch
+  switchStatus = digitalRead(switchPin1);
+  Serial.println(switchStatus); // print switch status
+  if(switchStatus == HIGH)
+  {
+    digitalWrite(powerControl, LOW);
+    platform.detach();
+    binNum = 0;
+  }
+
+}
+
+void bin2() {
+  //start spinning servo
+  platform.attach(servoPin);
+  digitalWrite(powerControl, HIGH);
+  platform.write(94);
+  
+  //stop when servo reaches first switch
+  switchStatus = digitalRead(switchPin1);
+  Serial.println(switchStatus); // print switch status
+  if(switchStatus == HIGH)
+  {
+    delay(975);
+    digitalWrite(powerControl, LOW);
+    platform.detach();
+    binNum = 0;
+  }
 }
 
 void bin3() {
-  while(spin == 0)
-    {
-      switchStatus2 = digitalRead(switchPin2);
-      Serial.println(switchStatus);
-      //Serial.println("Servo attached");
-      platform.attach(servoPin);
-      digitalWrite(powerControl, HIGH);
-      platform.write(95);
-      if(switchStatus2 == HIGH)
-      {
-        Serial.println("Servo detached");
-        digitalWrite(13, HIGH);
-        digitalWrite(powerControl, LOW);
-        platform.detach();
-        spin = 1;
-      }
-    }
+  //start spinning servo
+  platform.attach(servoPin);
+  digitalWrite(powerControl, HIGH);
+  platform.write(94);
+  
+  //stop when servo reaches first switch
+  switchStatus = digitalRead(switchPin2);
+  Serial.println(switchStatus); // print switch status
+  if(switchStatus == LOW)
+  {
+    delay(450);
+    digitalWrite(powerControl, LOW);
+    platform.detach();
+    binNum = 0;
+  }
 }
 
+void bin4() {
+  //start spinning servo
+  platform.attach(servoPin);
+  digitalWrite(powerControl, HIGH);
+  platform.write(94);
+  
+  //stop when servo reaches first switch
+  switchStatus = digitalRead(switchPin2);
+  Serial.println(switchStatus); // print switch status
+  if(switchStatus == LOW)
+  {
+    delay(1500);
+    digitalWrite(powerControl, LOW);
+    platform.detach();
+    binNum = 0;
+  }
+}
