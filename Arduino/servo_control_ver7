@@ -93,6 +93,14 @@ void loop() {
       case 55:
         rotateStop();
         break;
+
+      case 56:
+        openTrap();
+        break;
+
+      case 57:
+        resetServo();
+        break;
         
       default:
       break;
@@ -117,6 +125,8 @@ void bin1() {
     platform.detach();
     binNum = 0;
     Serial.println("Positioned");
+    Serial.println("Releasing Screw");
+    openTrap();
   }
 
 }
@@ -138,6 +148,10 @@ void bin2() {
     platform.detach();
     binNum = 0;
     Serial.println("Positioned");
+    Serial.println("Releasing Screw");
+    openTrap();
+    delay(1000);
+    resetServo();
   }
 }
 
@@ -153,11 +167,15 @@ void bin3() {
   //Serial.println(switchStatus); // print switch status
   if(switchStatus == LOW)
   {
-    delay(800);
+    delay(600);
     digitalWrite(powerControl, LOW);
     platform.detach();
     binNum = 0;
     Serial.println("Positioned");
+    Serial.println("Releasing Screw");
+    openTrap();
+    delay(1000);
+    resetServo();
   }
 }
 
@@ -178,6 +196,10 @@ void bin4() {
     platform.detach();
     binNum = 0;
     Serial.println("Positioned");
+    Serial.println("Releasing Screw");
+    openTrap();
+    delay(1000);
+    resetServo();
   }
 }
 
@@ -185,7 +207,7 @@ void trapDoor() {
   Serial.println("Nudging Trapdoor");
   trapdoor.write(10);
   delay(50);
-  trapdoor.write(15);
+  trapdoor.write(20);
   delay(50);
   trapdoor.write(4);
   delay(2000);
@@ -195,7 +217,7 @@ void rotateContinous() {
   Serial.println("Rotating Continuously");
   platform.attach(servoPin);
   digitalWrite(powerControl, HIGH);
-  platform.write(94);
+  platform.write(180);
 }
 
 void rotateStop() {
@@ -203,5 +225,31 @@ void rotateStop() {
     digitalWrite(powerControl, LOW);
     platform.detach();
     binNum = 0;
+}
 
+void openTrap() {
+  trapdoor.write(90);
+  delay(2000);
+  trapdoor.write(4);
+  binNum = 0;
+}
+
+void resetServo() {
+  
+  Serial.println("Resetting");
+  //start spinning servo
+  platform.attach(servoPin);
+  digitalWrite(powerControl, HIGH);
+  platform.write(94);
+  
+  //stop when servo reaches first switch
+  switchStatus = digitalRead(switchPin1);
+  Serial.println(switchStatus); // print switch status
+  if(switchStatus == HIGH)
+  {
+    delay(200);
+    digitalWrite(powerControl, LOW);
+    platform.detach();
+    binNum = 0;
+  }
 }
